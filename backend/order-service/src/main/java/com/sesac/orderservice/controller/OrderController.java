@@ -1,15 +1,13 @@
 package com.sesac.orderservice.controller;
 
+import com.sesac.orderservice.dto.OrderRequest;
 import com.sesac.orderservice.entity.Order;
 import com.sesac.orderservice.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -30,5 +28,15 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+
+    @PostMapping
+    public ResponseEntity<Order> createOrder(OrderRequest request) {
+        try {
+            Order order = orderService.createOrder(request);
+            return ResponseEntity.ok(order);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
