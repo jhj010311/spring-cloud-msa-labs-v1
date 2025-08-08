@@ -6,6 +6,7 @@ import com.sesac.orderservice.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class OrderController {
     public ResponseEntity<Order> createOrder(OrderRequest request) {
         try {
             Order order = orderService.createOrder(request);
-            return ResponseEntity.ok(order);
+            return ResponseEntity.status(HttpStatus.CREATED).body(order);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

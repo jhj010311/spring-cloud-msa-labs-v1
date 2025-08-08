@@ -55,8 +55,6 @@ public class OrderService {
         order.setTotalAmount(product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
         order.setStatus("COMPLETED");
 
-        orderRepository.save(order);
-
-        return order;
+        return orderRepository.save(order);
     }
 }
