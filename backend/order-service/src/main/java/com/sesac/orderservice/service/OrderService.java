@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +57,9 @@ public class OrderService {
         order.setStatus("COMPLETED");
 
         return orderRepository.save(order);
+    }
+
+    public List<Order> getOrdersByUserId(Long userId){
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 }
