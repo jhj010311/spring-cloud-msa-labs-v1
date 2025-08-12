@@ -6,6 +6,7 @@ import com.sesac.orderservice.client.dto.ProductDto;
 import com.sesac.orderservice.client.dto.UserDto;
 import com.sesac.orderservice.dto.OrderRequest;
 import com.sesac.orderservice.entity.Order;
+import com.sesac.orderservice.facade.UserServiceFacade;
 import com.sesac.orderservice.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserServiceClient userServiceClient;
     private final ProductServiceClient productServiceClient;
+    private final UserServiceFacade userServiceFacade;
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("order not found"));
@@ -36,7 +38,7 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderRequest request) {
 
-        UserDto user = userServiceClient.getUserById(request.getUserId());
+        UserDto user = userServiceFacade.getUserWithFallback(request.getUserId());
         if(user == null){
             throw new EntityNotFoundException("user not found");
         }
