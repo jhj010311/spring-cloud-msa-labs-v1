@@ -1,0 +1,91 @@
+### resilience circuitbreaker와 retry 추가 이후, user-service를 고의로 종료한 상태에서의 order-service 주문생성 로그
+
+2025-08-12T12:24:27.639+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/orders", parameters={}
+2025-08-12T12:24:27.643+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.sesac.orderservice.controller.OrderController#createOrder(OrderRequest)
+2025-08-12T12:24:27.657+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [OrderRequest(userId=2, productId=9, quantity=1)]
+2025-08-12T12:24:27.679+09:00  INFO 9332 --- [order-service] [nio-8083-exec-1] c.s.o.facade.UserServiceFacade           : User service 호출 시도 - userId = 2
+2025-08-12T12:24:27.741+09:00  WARN 9332 --- [order-service] [nio-8083-exec-1] o.s.c.l.core.RoundRobinLoadBalancer      : No servers available for service: user-service
+2025-08-12T12:24:27.744+09:00  WARN 9332 --- [order-service] [nio-8083-exec-1] .s.c.o.l.FeignBlockingLoadBalancerClient : Load balancer does not contain an instance for the service user-service
+2025-08-12T12:24:28.761+09:00  INFO 9332 --- [order-service] [nio-8083-exec-1] c.s.o.facade.UserServiceFacade           : User service 호출 시도 - userId = 2
+2025-08-12T12:24:28.761+09:00  WARN 9332 --- [order-service] [nio-8083-exec-1] o.s.c.l.core.RoundRobinLoadBalancer      : No servers available for service: user-service
+2025-08-12T12:24:28.761+09:00  WARN 9332 --- [order-service] [nio-8083-exec-1] .s.c.o.l.FeignBlockingLoadBalancerClient : Load balancer does not contain an instance for the service user-service
+2025-08-12T12:24:28.764+09:00  WARN 9332 --- [order-service] [nio-8083-exec-1] c.s.o.facade.UserServiceFacade           : User service 장애 감지 -- Fallback 실행 - userId = 2, 에러 = [503] during [GET] to [http://user-service/users/2] [UserServiceClient#getUserById(Long)]: [Load balancer does not contain an instance for the service user-service]
+2025-08-12T12:24:28.791+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] o.s.w.c.HttpMessageConverterExtractor    : Reading to [com.sesac.orderservice.client.dto.ProductDto]
+2025-08-12T12:24:28.901+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] org.hibernate.SQL                        :
+    insert
+    into
+        orders
+        (created_at, status, total_amount, updated_at, user_id)
+    values
+        (?, ?, ?, ?, ?)
+Hibernate:
+    insert
+    into
+        orders
+        (created_at, status, total_amount, updated_at, user_id)
+    values
+        (?, ?, ?, ?, ?)
+2025-08-12T12:24:29.022+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/yaml]
+2025-08-12T12:24:29.022+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.sesac.orderservice.entity.Order@53db39bf]
+2025-08-12T12:24:29.027+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 201 CREATED
+2025-08-12T12:24:29.159+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/orders/4", parameters={}
+2025-08-12T12:24:29.161+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.sesac.orderservice.controller.OrderController#getOrder(Long)
+2025-08-12T12:24:29.198+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] org.hibernate.SQL                        :
+    select
+        o1_0.id,
+        o1_0.created_at,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.updated_at,
+        o1_0.user_id
+    from
+        orders o1_0
+    where
+        o1_0.id=?
+Hibernate:
+    select
+        o1_0.id,
+        o1_0.created_at,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.updated_at,
+        o1_0.user_id
+    from
+        orders o1_0
+    where
+        o1_0.id=?
+2025-08-12T12:24:29.220+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/yaml]
+2025-08-12T12:24:29.221+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.sesac.orderservice.entity.Order@2deec95e]
+2025-08-12T12:24:29.222+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-12T12:24:29.228+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/orders/4", parameters={}
+2025-08-12T12:24:29.228+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.sesac.orderservice.controller.OrderController#getOrder(Long)
+2025-08-12T12:24:29.231+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] org.hibernate.SQL                        :
+    select
+        o1_0.id,
+        o1_0.created_at,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.updated_at,
+        o1_0.user_id
+    from
+        orders o1_0
+    where
+        o1_0.id=?
+Hibernate:
+    select
+        o1_0.id,
+        o1_0.created_at,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.updated_at,
+        o1_0.user_id
+    from
+        orders o1_0
+    where
+        o1_0.id=?
+2025-08-12T12:24:29.236+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/yaml]
+2025-08-12T12:24:29.237+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.sesac.orderservice.entity.Order@372ce1d2]
+2025-08-12T12:24:29.237+09:00 DEBUG 9332 --- [order-service] [nio-8083-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+
+
+호출시도 2회, 그 이후 "장애감지" 로그를 확인 가능
