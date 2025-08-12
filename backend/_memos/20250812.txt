@@ -89,3 +89,102 @@ Hibernate:
 
 
 호출시도 2회, 그 이후 "장애감지" 로그를 확인 가능
+
+
+
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, tracing, refresh
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+
+tracing 부분이 어떤 활동을 지시하는지 가능한 한 상세하게 알려주겠어?
+
+
+ChatGPT의 말:
+
+43s 동안 생각함
+좋아요 — 주신 tracing 관련 설정(management.tracing.sampling.probability와 management.zipkin.tracing.endpoint)이 **런타임에서 실제로 어떤 동작(activities)**을 지시하는지 단계별·상세하게 설명할게요. (핵심 문서 출처도 문단 뒤에 붙여둡니다.)
+
+1) 전체 개요 — 파이프라인 요약
+간단히 말하면 이 설정은 애플리케이션에서 생성한 trace/span(= 관찰 정보)을 어느 비율로, 어디(Zipkin)에 보내는지를 결정합니다.
+실제 흐름은 대략 이렇습니다:
+
+HTTP 요청이나 애플리케이션 코드에서 Micrometer/Sleuth(또는 Micrometer Tracing)로 Observation/Span이 생성된다.
+
+**샘플러(sampler)**가 그 trace를 “보낼지(샘플링)” 결정한다.
+
+샘플링 결과가 exportable이면, 생성된 span들이 수집/버퍼되어 Zipkin 엔드포인트로 비동기 전송된다.
+
+Zipkin 서버가 수신한 spans를 저장하고 UI에서 조회할 수 있게 된다.
+Home
+Home
+
+2) management.tracing.sampling.probability: 1.0 — 정확히 무엇을 지시하나?
+이 설정은 trace를 샘플링(추출)할 확률을 0.0 ~ 1.0의 실수로 지정합니다.
+
+0.0 = 0% (아무 것도 내보내지 않음), 1.0 = 100% (모든 trace를 내보냄).
+
+기본값(운영/라이브러리 기본)은 보통 **0.1 (약 10%)**로, 트래픽·스토리지·네트워크 부담을 줄이기 위해 일부만 전송합니다. 1.0으로 바꾸면 모든 요청의 trace를 Zipkin으로 전송하도록 지시합니다.
+Home
+Medium
+
+실무적 의미 / 부작용
+
+100% 샘플링은 디버깅에 좋지만 네트워크/Zipkin 저장공간·CPU 비용과 Zipkin 쿼리 부담을 크게 늘립니다. 대규모 트래픽 환경에서는 일반적으로 낮은 확률(예: 0.01 ~ 0.1)이나 샘플링 전략(예: rate-limited, adaptive)을 씁니다.
+cloud.spring.io
+Medium
+
+3) management.zipkin.tracing.endpoint: http://localhost:9411/api/v2/spans — 이게 정확히 뭘 가리키나?
+이 값은 Span을 전송할 HTTP 엔드포인트(URL) 를 지정합니다. Zipkin의 v2 API에서는 /api/v2/spans로 POST해서 span 리스트(JSON)를 전송하는 것이 표준입니다. 따라서 이 설정은 Micrometer/Brave(또는 Sleuth) 쪽에서 수집된 span을 HTTP POST로 전송하는 대상 URL을 지정합니다.
+Home
+zipkin.io
+
+주의점
+
+Zipkin 대신 Jaeger/Tempo/OTel Collector 등을 쓰면 엔드포인트 경로(및 포맷)가 달라집니다(예: Tempo 는 /v1/traces 등). 엔드포인트를 올바르게 맞춰야 404/연결 오류가 납니다.
+Medium
+
+4) 샘플링과 계측(instrumentation)의 차이(오해 방지)
+**샘플링은 ‘내보낼(보낼)지 여부’**를 결정합니다.
+
+많은 경우 span(또는 관찰)은 애플리케이션 내부에서 생성/측정되지만, 샘플링에서 “보내지 않음”으로 결정되면 외부 백엔드(Zipkin)로 전송되지 않습니다.
+
+즉, 샘플링을 낮추면 “애플리케이션이 내부적으로 트레이스 아이디를 만들긴 하지만, 실제로 Zipkin에 저장되는 것(= export)은 적어진다”는 뜻입니다. (디버깅 시에는 샘플링을 높이는 방식으로 확인)
+cloud.spring.io
+Home
+
+5) 추가/실무 팁
+버전 차이: Spring Cloud Sleuth 기반(spring.sleuth.*)일 때와 Spring Boot 3 / Micrometer Tracing 기반(management.tracing.*)일 때 설정 키가 달라집니다. (마이그레이션 시 spring.sleuth.sampler.probability → management.tracing.sampling.probability 등으로 바뀌었습니다.) 설정 키는 사용 중인 라이브러리/버전에 맞춰 확인하세요.
+docs.openrewrite.org
+
+강제 수집: 디버깅 목적 등으로 개별 request/메시지를 강제로 export 하고 싶으면(라이브러리별로) 특정 헤더(e.g. X-B3-Flags:1 등)로 강제 표기를 할 수 있는 경우가 있습니다(라이브러리 문서 참조).
+cloud.spring.io
+
+의존성: Spring Boot 3 환경에서는 spring-boot-actuator, micrometer-observation, micrometer-tracing-bridge-brave(또는 OpenTelemetry bridge), 그리고 Zipkin 전송용 모듈을 추가해야 정상 동작합니다. (문서/가이드 참조)
+Home
+
+6) 검증 방법(간단한 체크리스트)
+Zipkin(또는 설정한 백엔드)이 /api/v2/spans로 수신 대기 중인지 확인(예: docker run -d -p 9411:9411 openzipkin/zipkin).
+zipkin.io
+
+애플리케이션에 Micrometer Tracing 관련 의존성이 있는지 확인.
+Home
+
+management.tracing.sampling.probability: 1.0으로 설정하고 애플리케이션 요청을 트리거 → Zipkin UI에서 trace가 보이는지 확인(Zipkin UI의 Run Query / Show).
+Home
+
+
+
+**요약
+sampling의 probability는 0.0에서 최소, 1.0에서 최대로, 최대일 경우 발생하는 모든 트레이스를 출력한다
