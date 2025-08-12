@@ -8,6 +8,8 @@ import com.sesac.orderservice.dto.OrderRequest;
 import com.sesac.orderservice.entity.Order;
 import com.sesac.orderservice.facade.UserServiceFacade;
 import com.sesac.orderservice.repository.OrderRepository;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class OrderService {
     private final UserServiceClient userServiceClient;
     private final ProductServiceClient productServiceClient;
     private final UserServiceFacade userServiceFacade;
+    private final Tracer tracer;
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("order not found"));
@@ -38,27 +41,39 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderRequest request) {
 
-        UserDto user = userServiceFacade.getUserWithFallback(request.getUserId());
-        if(user == null){
-            throw new EntityNotFoundException("user not found");
+        Span span = tracer.nextSpan()
+                .name("createOrder")
+                .tag("order.userId", request.getUserId())
+                .tag("order.productId", request.getProductId())
+                .start();
+
+        try(Tracer.SpanInScope ws = tracer.withSpan(span)) {
+            UserDto user = userServiceFacade.getUserWithFallback(request.getUserId());
+            if(user == null){
+                throw new EntityNotFoundException("user not found");
+            }
+
+            ProductDto product = productServiceClient.getProductById(request.getProductId());
+            if(product == null){
+                throw new EntityNotFoundException("product not found");
+            }
+
+            if(product.getStockQuantity() < request.getQuantity()) {
+                throw new RuntimeException("out of stock");
+            }
+
+            Order order = new Order();
+
+            order.setUserId(user.getId());
+            order.setTotalAmount(product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
+            order.setStatus("COMPLETED");
+
+            return orderRepository.save(order);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            span.end();
         }
-
-        ProductDto product = productServiceClient.getProductById(request.getProductId());
-        if(product == null){
-            throw new EntityNotFoundException("product not found");
-        }
-
-        if(product.getStockQuantity() < request.getQuantity()) {
-            throw new RuntimeException("out of stock");
-        }
-
-        Order order = new Order();
-
-        order.setUserId(user.getId());
-        order.setTotalAmount(product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
-        order.setStatus("COMPLETED");
-
-        return orderRepository.save(order);
     }
 
     public List<Order> getOrdersByUserId(Long userId){
