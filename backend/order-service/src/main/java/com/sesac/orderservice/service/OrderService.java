@@ -61,10 +61,6 @@ public class OrderService {
                 throw new EntityNotFoundException("product not found");
             }
 
-            if(product.getStockQuantity() < request.getQuantity()) {
-                throw new RuntimeException("out of stock");
-            }
-
             Order order = new Order();
 
             order.setUserId(user.getId());
