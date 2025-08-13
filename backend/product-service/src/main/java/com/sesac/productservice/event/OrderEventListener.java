@@ -14,7 +14,7 @@ public class OrderEventListener {
     private final ProductService productService;
 
     // 해당하는 큐를 자동추적하여 발생
-    @RabbitListener(queues = "${order.event.queue.notification}")
+    @RabbitListener(queues = "${order.event.queue.inventory}")
     public void handleOrderEvent(OrderCreatedEvent event) {
         log.info("주문 생성 이벤트 수신 - orderId={}", event.getOrderId());
 
