@@ -39,3 +39,13 @@ otel:
   resource:
     attributes:
       service.name: ${spring.applicationi.name}
+
+order:
+  event:
+    exchange: order.exchange    # 이벤트 이름
+    queue:    # queue의 이름 정하기
+      notification: order.notification.queue
+      inventory: order.inventory.queue
+    routing-key:  # 이벤트 발생시 어느 주소로 보내는가
+      notification: order.notification
+      inventory: order.inventory
