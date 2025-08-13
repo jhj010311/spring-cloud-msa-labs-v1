@@ -37,6 +37,9 @@ dependencies {
     // 분산 트레이스 관련
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
+
+    // rabbitMQ 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
 dependencyManagement {
     imports {

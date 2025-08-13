@@ -40,6 +40,9 @@ dependencies {
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
     implementation 'io.github.openfeign:feign-micrometer'
+
+    // rabbitMQ 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
 dependencyManagement {
     imports {
