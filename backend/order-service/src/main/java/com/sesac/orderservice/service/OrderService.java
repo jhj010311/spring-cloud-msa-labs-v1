@@ -6,6 +6,8 @@ import com.sesac.orderservice.client.dto.ProductDto;
 import com.sesac.orderservice.client.dto.UserDto;
 import com.sesac.orderservice.dto.OrderRequest;
 import com.sesac.orderservice.entity.Order;
+import com.sesac.orderservice.event.OrderCreatedEvent;
+import com.sesac.orderservice.event.OrderEventPublisher;
 import com.sesac.orderservice.facade.UserServiceFacade;
 import com.sesac.orderservice.repository.OrderRepository;
 import io.micrometer.tracing.Span;
@@ -28,6 +30,7 @@ public class OrderService {
     private final ProductServiceClient productServiceClient;
     private final UserServiceFacade userServiceFacade;
     private final Tracer tracer;
+    private final OrderEventPublisher orderEventPublisher;
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("order not found"));
@@ -67,6 +70,20 @@ public class OrderService {
             order.setUserId(user.getId());
             order.setTotalAmount(product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
             order.setStatus("COMPLETED");
+
+
+            // rabbitMQ 비동기 이벤트 발행
+            OrderCreatedEvent event = new OrderCreatedEvent(
+                    order.getId(),
+                    request.getUserId(),
+                    request.getProductId(),
+                    request.getQuantity(),
+                    order.getTotalAmount(),
+                    order.getCreatedAt()
+            );
+
+            orderEventPublisher.publishOrderCreated(event);
+
 
             return orderRepository.save(order);
         } catch (Exception e) {
