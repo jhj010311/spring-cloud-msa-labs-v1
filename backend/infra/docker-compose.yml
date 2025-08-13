@@ -26,6 +26,18 @@ services:
     networks:
       - msa-network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: msa-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP 포트
+      - "15672:15672" # UI 포트 >> 여기에서 통계화면을 볼 수 있음
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    networks:
+      - msa-network
+
 volumes:
   mysql-data:
 
