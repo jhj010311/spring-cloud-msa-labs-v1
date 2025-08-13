@@ -4,6 +4,7 @@ import com.sesac.productservice.entity.Product;
 import com.sesac.productservice.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -22,5 +24,19 @@ public class ProductService {
 
     public Product findById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found"));
+    }
+
+
+    @Transactional
+    public void decreaseStock(Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        if(product.getStockQuantity() < quantity) {
+            throw new RuntimeException("재고가 부족합니다");
+        }
+
+        product.setStockQuantity(product.getStockQuantity() - quantity);
+
+        log.info("재고 차감 완료 - productId={}, stockQuantity={}", productId, product.getStockQuantity());
     }
 }
