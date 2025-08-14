@@ -52,6 +52,10 @@ order:
     queue:    # queue의 이름 정하기
       notification: order.notification.queue
       inventory: order.inventory.queue
+      payment-request: order.payment.request.queue
+      inventory-failed: order.inventory.failed.queue
     routing-key:  # 이벤트 발생시 어느 주소로 보내는가
       notification: order.notification
       inventory: order.inventory
+      payment-request: order.payment.request
+      inventory-failed: order.inventory.failed
