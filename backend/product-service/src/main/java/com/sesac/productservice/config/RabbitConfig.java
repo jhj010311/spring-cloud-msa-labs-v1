@@ -31,6 +31,18 @@ public class RabbitConfig {
     // product-service 발행 이벤트 관련 큐
 
 
+    // payment-service 발행 이벤트 관련 큐
+    @Value("${order.event.queue.payment-completed}")
+    private String paymentCompletedQueue;
+
+    @Value("${order.event.queue.payment-failed}")
+    private String paymentFailedQueue;
+
+    @Value("${order.event.queue.inventory-restore}")
+    private String inventoryRestoreQueue;
+    // payment-service 발행 이벤트 관련 큐
+    
+
     @Value("${order.event.routing-key.notification}")
     private String notificationRoutingKey;
 
@@ -45,6 +57,18 @@ public class RabbitConfig {
     @Value("${order.event.routing-key.inventory-failed}")
     private String inventoryFailedRoutingKey;
     // product-service 발행 관련 라우팅 키
+
+
+    // payment-service 발행 관련 라우팅 키
+    @Value("${order.event.routing-key.payment-completed}")
+    private String paymentCompletedRoutingKey;
+
+    @Value("${order.event.routing-key.payment-failed}")
+    private String paymentFailedRoutingKey;
+
+    @Value("${order.event.routing-key.inventory-restore}")
+    private String inventoryRestoreRoutingKey;
+    // payment-service 발행 관련 라우팅 키
 
 
     // Exchange 정의
