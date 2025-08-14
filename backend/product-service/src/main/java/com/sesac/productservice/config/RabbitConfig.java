@@ -41,7 +41,7 @@ public class RabbitConfig {
     @Value("${order.event.queue.inventory-restore}")
     private String inventoryRestoreQueue;
     // payment-service 발행 이벤트 관련 큐
-    
+
 
     @Value("${order.event.routing-key.notification}")
     private String notificationRoutingKey;
