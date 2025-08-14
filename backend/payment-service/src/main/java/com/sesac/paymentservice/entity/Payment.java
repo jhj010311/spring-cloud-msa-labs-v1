@@ -2,6 +2,7 @@ package com.sesac.paymentservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment {
