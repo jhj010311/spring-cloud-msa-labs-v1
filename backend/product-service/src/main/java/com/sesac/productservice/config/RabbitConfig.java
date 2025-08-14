@@ -105,7 +105,7 @@ public class RabbitConfig {
                 .with(inventoryFailedRoutingKey);
     }
     // product-service 발행 관련 Binding 정의
-    
+
 
     // JSON 메시지 컨버터 추가
     @Bean
