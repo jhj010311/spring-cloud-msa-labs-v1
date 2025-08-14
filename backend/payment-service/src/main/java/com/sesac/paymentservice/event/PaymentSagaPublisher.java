@@ -22,6 +22,9 @@ public class PaymentSagaPublisher {
     @Value("${order.event.routing-key.payment-failed}")
     private String paymentFailedRoutingKey;
 
+    @Value("${order.event.routing-key.inventory-restore}")
+    private String inventoryRestoreRoutingKey;
+
 
     // 결제 성공시
     public void publishPaymentCompletedEvent(PaymentCompletedEvent event) {
@@ -30,6 +33,10 @@ public class PaymentSagaPublisher {
 
     // 결제 실패시
     public void publishPaymentFailureEvent(PaymentFailedEvent event) {
+        // order-service에게 결제 실패 이벤트 발행(주문 취소)
         rabbitTemplate.convertAndSend(exchange, paymentFailedRoutingKey, event);
+
+        // product-service에게 결제 실패 이벤트 발행(재고 복구)
+        rabbitTemplate.convertAndSend(exchange, inventoryRestoreRoutingKey, event);
     }
 }

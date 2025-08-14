@@ -17,6 +17,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
+    @Transactional
     public Payment processPayment(PaymentRequestEvent event) {
         Payment payment = new Payment();
 

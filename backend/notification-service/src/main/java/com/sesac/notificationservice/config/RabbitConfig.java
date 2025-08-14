@@ -31,6 +31,18 @@ public class RabbitConfig {
     // product-service 발행 이벤트 관련 큐
 
 
+    // payment-service 발행 이벤트 관련 큐
+    @Value("${order.event.queue.payment-completed}")
+    private String paymentCompletedQueue;
+
+    @Value("${order.event.queue.payment-failed}")
+    private String paymentFailedQueue;
+
+    @Value("${order.event.queue.inventory-restore}")
+    private String inventoryRestoreQueue;
+    // payment-service 발행 이벤트 관련 큐
+
+
     @Value("${order.event.routing-key.notification}")
     private String notificationRoutingKey;
 
@@ -45,6 +57,18 @@ public class RabbitConfig {
     @Value("${order.event.routing-key.inventory-failed}")
     private String inventoryFailedRoutingKey;
     // product-service 발행 관련 라우팅 키
+
+
+    // payment-service 발행 관련 라우팅 키
+    @Value("${order.event.routing-key.payment-completed}")
+    private String paymentCompletedRoutingKey;
+
+    @Value("${order.event.routing-key.payment-failed}")
+    private String paymentFailedRoutingKey;
+
+    @Value("${order.event.routing-key.inventory-restore}")
+    private String inventoryRestoreRoutingKey;
+    // payment-service 발행 관련 라우팅 키
 
 
     // Exchange 정의
@@ -72,6 +96,18 @@ public class RabbitConfig {
     @Bean
     public Queue inventoryFailedQueue() { return QueueBuilder.durable(inventoryFailedRoutingKey).build(); }
     // product-service 발행 관련
+
+
+    // payment-service 발행 관련
+    @Bean
+    public Queue paymentCompletedQueue() { return QueueBuilder.durable(paymentCompletedQueue).build(); }
+
+    @Bean
+    public Queue paymentFailedQueue() { return QueueBuilder.durable(paymentFailedRoutingKey).build(); }
+
+    @Bean
+    public Queue inventoryRestoreQueue() { return QueueBuilder.durable(inventoryRestoreRoutingKey).build(); }
+    // payment-service 발행 관련
 
 
     // Binding 정의
@@ -105,6 +141,30 @@ public class RabbitConfig {
                 .with(inventoryFailedRoutingKey);
     }
     // product-service 발행 관련 Binding 정의
+
+
+    // payment-service 발행 관련 Binding 정의
+    @Bean
+    public Binding paymentCompletedBinding() {
+        return BindingBuilder.bind(paymentCompletedQueue())
+                .to(orderExchange())
+                .with(paymentCompletedRoutingKey);
+    }
+
+    @Bean
+    public Binding paymentFailedBinding() {
+        return BindingBuilder.bind(paymentFailedQueue())
+                .to(orderExchange())
+                .with(paymentFailedRoutingKey);
+    }
+
+    @Bean
+    public Binding inventoryRestoreBinding() {
+        return BindingBuilder.bind(inventoryFailedQueue())
+                .to(orderExchange())
+                .with(inventoryRestoreRoutingKey);
+    }
+    // payment-service 발행 관련 Binding 정의
 
 
     // JSON 메시지 컨버터 추가
