@@ -31,16 +31,20 @@ public class PaymentService {
 
         // 결제 처리 시뮬레이션
         try {
+
+            Thread.sleep(2000);
+
             if(Math.random() < 0.3) {
                 throw new RuntimeException("잔액 부족");
             }
 
             savedPayment.setStatus(PaymentStatus.COMPLETED);
             paymentRepository.save(savedPayment);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             savedPayment.setStatus(PaymentStatus.FAILED);
             savedPayment.setFailureReason(e.getMessage());
             paymentRepository.save(savedPayment);
+            throw new RuntimeException("결제 실패");
         }
 
         return savedPayment;

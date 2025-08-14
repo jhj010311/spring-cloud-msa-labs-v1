@@ -21,7 +21,7 @@ public class PaymentSagaHandler {
 
         // 1. 결제시도
         try {
-            paymentService.processPayment(event);
+            Payment payment = paymentService.processPayment(event);
 
             // 2-1. 결제성공
             // PaymentCompletedEvent 발행
