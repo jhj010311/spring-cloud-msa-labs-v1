@@ -94,7 +94,7 @@ public class RabbitConfig {
     public Queue paymentRequestQueue() { return QueueBuilder.durable(paymentRequestQueue).build(); }
 
     @Bean
-    public Queue inventoryFailedQueue() { return QueueBuilder.durable(inventoryFailedRoutingKey).build(); }
+    public Queue inventoryFailedQueue() { return QueueBuilder.durable(inventoryFailedQueue).build(); }
     // product-service 발행 관련
 
 
