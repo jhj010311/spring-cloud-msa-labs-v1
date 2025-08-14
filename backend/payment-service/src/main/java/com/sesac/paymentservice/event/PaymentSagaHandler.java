@@ -19,7 +19,6 @@ public class PaymentSagaHandler {
     public void handlePaymentRequest(PaymentRequestEvent event) {
         log.info("결제 요청 이벤트 수신 - orderId: {}, amount: {}", event.getOrderId(), event.getTotalAmount());
 
-        Payment payment = null;
         // 1. 결제시도
         try {
             paymentService.processPayment(event);
@@ -33,6 +32,7 @@ public class PaymentSagaHandler {
             );
 
             paymentSagaPublisher.publishPaymentCompletedEvent(paymentCompletedEvent);
+            log.info("결제 성공 이벤트 발행 완료 -> order-service");
         } catch (Exception e) {
             // 2-2. 결제실패
             // PaymentFailedEvent 발행
@@ -41,10 +41,11 @@ public class PaymentSagaHandler {
                     event.getUserId(),
                     event.getProductId(),
                     event.getQuantity(),
-                    payment.getFailureReason()
+                    e.getMessage()
             );
 
             paymentSagaPublisher.publishPaymentFailureEvent(paymentFailedEvent);
+            log.info("결제 실패 이벤트 발행 완료 -> order-service, product-service");
         }
 
     }

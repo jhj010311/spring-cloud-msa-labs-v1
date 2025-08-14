@@ -69,14 +69,18 @@ public class OrderService {
             order.setStatus(OrderStatus.PENDING);
 
 
+            // 이벤트 발행 전에 저장해서 이벤트에 값이 반영되도록 함
+            Order savedOrder = orderRepository.save(order);
+
+
             // rabbitMQ 비동기 이벤트 발행
             OrderCreatedEvent event = new OrderCreatedEvent(
-                    order.getId(),
+                    savedOrder.getId(),
                     request.getUserId(),
                     request.getProductId(),
                     request.getQuantity(),
-                    order.getTotalAmount(),
-                    order.getCreatedAt()
+                    savedOrder.getTotalAmount(),
+                    savedOrder.getCreatedAt()
             );
 
             orderEventPublisher.publishOrderCreated(event);
