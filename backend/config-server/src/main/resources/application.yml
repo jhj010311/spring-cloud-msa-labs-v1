@@ -11,6 +11,12 @@ spring:
       server:
         native:
 #          search-locations: C:/Sesac JHJ/Git/spring-cloud-msa-labs-v1/backend/config-repo
-          search-locations: file:///${user.dir}/backend/config-repo
+#          search-locations: file:///${user.dir}/backend/config-repo
 #        git:
 #          uri: file:///${user.dir}/../config-repo
+          search-locations: file:///config-repo
+        health:
+          repositories:
+            native:
+              name: native
+              profiles: native
