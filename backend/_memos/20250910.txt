@@ -1,0 +1,20 @@
+aws eks에 마이그레이션 해보는 중
+
+
+해야할 것들
+- 각 앱.yml 실행 프로파일 변경 >> "eks"
+-- config-repo에 application-eks.yml 작성
+- 외부에서 어떻게 접근하도록 할지 결정
+- deployment.yml 작성
+- rds 연결점 마련
+-- config-repo의 각 서비스.yml 안의 mysql uri 변경
+
+
+
+📌 추가로 점검하면 좋은 부분
+
+Config Server: Git repo나 S3 backend 접근 권한 (SSH 키, 토큰, AWS IAM Role 등) 확인 필요.
+
+Eureka Server: Config Server에서 세팅 가져오는 걸 전제한다면, env에서 SPRING_PROFILES_ACTIVE만 있으면 OK.
+
+API Gateway: 보통 Eureka 서버 주소(http://eureka-server:8761/eureka/)는 application.yml에서 자동 참조하도록 되어 있으니 env에서 추가 지정 필요 없음.
