@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-deployment
+  namespace: eks-msa-project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+      - name: notification-service
+        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/notification-service:v1
+        ports:
+        - containerPort: 8084
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: eks

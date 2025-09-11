@@ -36,3 +36,14 @@ Next.js App Router(app/products/page.tsx) 기반이라면 /products 요청 시 S
 데이터 API 위치
 useEffect로 부르는 API는 어디 배포되어 있나요?
 백엔드가 따로 있으면, CORS/도메인 설정까지 챙겨야 합니다.
+
+
+
+
+
+
+
+
+250911 17:15
+RabbitMQ, Zipkin을 도커에 docker-compose로 올려두고 실행했던 것을 까먹음
+추후 재시도할 때 참고할 것

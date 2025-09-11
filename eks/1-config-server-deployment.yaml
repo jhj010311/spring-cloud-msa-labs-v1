@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-deployment
+  namespace: eks-msa-project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-server
+  template:
+    metadata:
+      labels:
+        app: config-server
+    spec:
+      containers:
+      - name: config-service
+        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/config-server:v1
+        ports:
+        - containerPort: 8888
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: eks
