@@ -1,0 +1,22 @@
+# cluster-config.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: sesac-jhj-msa-cluster
+  region: ap-northeast-2
+
+vpc:
+  id: vpc-0b565d92a65f7dc4f
+  subnets:
+    public:
+      ap-northeast-2a:
+        id: subnet-056bd5d04ebbecda5
+      ap-northeast-2b:
+        id: subnet-020a24e2a782bc13b
+    private:
+      ap-northeast-2a:
+        id: subnet-081b73beb7710aeee
+      ap-northeast-2b:
+        id: subnet-01e6821e6a2a96f62
+    

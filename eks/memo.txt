@@ -1,0 +1,8 @@
+eksctl create nodegroup \
+  --cluster sesac-jhj-msa-cluster \
+  --name msa-nodes \
+  --node-type t3.medium \
+  --nodes 2 \
+  --nodes-min 1 \
+  --nodes-max 3 \
+  --region ap-northeast-2
