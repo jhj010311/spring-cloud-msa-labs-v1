@@ -18,3 +18,21 @@ Config Server: Git repo나 S3 backend 접근 권한 (SSH 키, 토큰, AWS IAM Ro
 Eureka Server: Config Server에서 세팅 가져오는 걸 전제한다면, env에서 SPRING_PROFILES_ACTIVE만 있으면 OK.
 
 API Gateway: 보통 Eureka 서버 주소(http://eureka-server:8761/eureka/)는 application.yml에서 자동 참조하도록 되어 있으니 env에서 추가 지정 필요 없음.
+
+
+
+
+프론트엔드 관련
+
+s3 배포를 위해선 클라우드 프론트를 포함해서 이것저것 설정할게 많은듯
+불가능한 수준은 아님?
+
+⚠️ 다만 주의할 점:
+라우팅
+Next.js App Router(app/products/page.tsx) 기반이라면 /products 요청 시 S3에서 바로 정적 파일을 찾아야 해요.
+이때 S3 단독은 SPA 라우팅을 제대로 못 처리합니다 → 반드시 CloudFront + SPA 리다이렉트 규칙
+ 넣어줘야 /products, /cart 같은 라우트에서 404 대신 index.html을 내려주고 React 라우터가 작동하게 됩니다.
+
+데이터 API 위치
+useEffect로 부르는 API는 어디 배포되어 있나요?
+백엔드가 따로 있으면, CORS/도메인 설정까지 챙겨야 합니다.
