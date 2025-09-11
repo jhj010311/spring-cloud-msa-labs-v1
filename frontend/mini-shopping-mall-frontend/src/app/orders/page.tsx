@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { orderApi, Order } from '@/lib/api';
@@ -58,12 +59,12 @@ export default function OrdersPage() {
       {orders.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-600 text-lg">주문 내역이 없습니다.</p>
-          <a
+          <Link
             href="/products"
             className="mt-4 inline-block bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600"
           >
             상품 둘러보기
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="space-y-6">
