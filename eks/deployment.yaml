@@ -144,6 +144,16 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
 ---
 apiVersion: v1
 kind: Service
@@ -184,6 +194,16 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
 ---
 apiVersion: v1
 kind: Service
@@ -224,6 +244,16 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
 ---
 apiVersion: v1
 kind: Service
@@ -304,6 +334,16 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
 ---
 apiVersion: v1
 kind: Service
