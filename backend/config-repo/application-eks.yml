@@ -8,8 +8,8 @@ spring:
     hibernate:
       ddl-auto: update
   rabbitmq:
-    host: sesac-jhj-todo-rabbitmq
-    port: 5672
+    host: b-f18469da-bf6e-4f13-8e36-adf421189ce9.mq.ap-northeast-2.on.aws
+    port: 5671
     username: admin
     template:
       observation-enabled: true

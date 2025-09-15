@@ -21,3 +21,8 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
+              key: password

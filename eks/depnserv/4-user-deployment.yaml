@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-deployment
+  name: user-deployment
   namespace: eks-msa-project
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: order-service
+      app: user-service
   template:
     metadata:
       labels:
-        app: order-service
+        app: user-service
     spec:
       containers:
-      - name: order-service
-        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/order-service:v1
+      - name: user-service
+        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/user-service:v1
         ports:
-        - containerPort: 8083
+        - containerPort: 8081
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
@@ -30,4 +30,9 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysql-secret
+              key: password
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
               key: password

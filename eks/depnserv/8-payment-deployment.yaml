@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-deployment
+  name: payment-deployment
   namespace: eks-msa-project
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-service
+      app: payment-service
   template:
     metadata:
       labels:
-        app: user-service
+        app: payment-service
     spec:
       containers:
-      - name: user-service
-        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/user-service:v1
+      - name: payment-service
+        image: 857360183365.dkr.ecr.ap-northeast-2.amazonaws.com/sesac-jhj-msa/payment-service:v1
         ports:
-        - containerPort: 8081
+        - containerPort: 8085
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
@@ -30,4 +30,9 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysql-secret
+              key: password
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
               key: password
