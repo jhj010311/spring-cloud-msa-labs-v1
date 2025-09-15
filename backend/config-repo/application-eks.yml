@@ -8,10 +8,9 @@ spring:
     hibernate:
       ddl-auto: update
   rabbitmq:
-    host: rabbitmq  # Docker 서비스명 사용
+    host: sesac-jhj-todo-rabbitmq
     port: 5672
     username: admin
-    password: admin123
     template:
       observation-enabled: true
     listener:
