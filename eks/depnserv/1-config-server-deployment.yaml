@@ -21,3 +21,5 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: eks
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Duser.home=/tmp"

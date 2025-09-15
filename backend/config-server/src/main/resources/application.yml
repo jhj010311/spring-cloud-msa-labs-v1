@@ -16,7 +16,7 @@ spring:
 ##          uri: file:///${user.dir}/../config-repo
 #          search-locations: file:///config-repo
         git:
-          uri: https://github.com/jhj010311/aws-labs-v1
+          uri: https://github.com/jhj010311/spring-cloud-msa-labs-v1-v1
           search-paths:
             - backend/config-repo
         health:
